@@ -669,6 +669,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
 .clock{display:flex!important;gap:18px;flex-shrink:0;text-align:left}.clockcity{min-width:100px}.clockcity span{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.6px}.clockcity strong{display:block;font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums}.activitygrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.activitynum{font:36px Georgia;color:var(--accent)}.transfer{padding:20px;border-top:1px solid var(--line)}.transfer h2{font:23px Georgia;margin:0 0 15px}.transfer h3{font-size:14px;margin:16px 0 5px}.transfer p{font-size:13px;margin:5px 0 12px;color:var(--muted)}.transfer a{font-size:12px}.mapcaption{display:none}.top{height:auto;min-height:78px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}.topnav{flex-wrap:wrap}.infocard dd{overflow-wrap:anywhere}
 
 a.action{min-height:44px}.event button{min-height:36px}</style><style>.walking-stats{grid-template-columns:repeat(4,minmax(0,1fr))}@media(max-width:600px){.walking-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}</style><style>.brand{min-width:0}.brandmark{flex-shrink:0}.brand>div:last-child{min-width:0}.brand small{letter-spacing:.3px;line-height:1.4;margin-top:3px}.brand strong{display:block;line-height:1.25}</style><style>
+
+/* landing entrance animation (2 s) */
+@keyframes landWipe{from{clip-path:inset(0 100% 0 0);opacity:0;transform:translateY(6px)}to{clip-path:inset(0 0 0 0);opacity:1;transform:none}}
+@keyframes landUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.landing.play .landing-mark{animation:landWipe 1.1s cubic-bezier(.3,.7,.2,1) both}
+.landing.play .landing-eyebrow{animation:landUp .6s ease-out both}
+.landing.play .landing-title{animation:landUp .7s ease-out .7s both}
+.landing.play .landing-sub{animation:landUp .6s ease-out 1.1s both}
+.landing.play .landing-cta{animation:landUp .6s ease-out 1.4s both}
+@media(prefers-reduced-motion:reduce){.landing.play *{animation:none!important}}
 .footer{flex-direction:column;align-items:center;text-align:center;gap:4px;font-size:11px}
 .weekcard .eyebrow{color:var(--accent)}
 .byline{display:block;margin-top:6px;color:var(--ink);font-weight:bold}.byline a{color:var(--accent)}
@@ -904,8 +914,8 @@ function renderFreeDay(){const ideas=[['Blue Mountains','Scenic lookouts, bushwa
 function transferInstructions(){if(selectedDay===0)return `<section class="transfer"><h2>Getting to the hotel</h2><h3>Taxi</h3><p>After collecting your bags and clearing customs, follow the Taxi signs to the official T1 rank outside arrivals. A rank supervisor can help with a larger vehicle for your group and luggage.</p><h3>Uber</h3><p>Once ready to leave, request your ride in the Uber app. UberX uses Rank C, about 20 m outside Arrivals Hall B: give your six-digit PIN to the first available driver. Other Uber options use assigned vehicles at Rank B. Follow the pickup instructions in the app.</p><h3>Show your driver</h3><p><strong>Caption by Hyatt Central Sydney<br>13 Parker Street, Haymarket NSW 2000</strong></p>${link('https://www.sydneyairport.com.au/info-sheet/by-taxi-and-rideshare','Airport taxi & Uber guide ↗')}</section>`;if(selectedDay===9)return `<section class="transfer"><h2>Getting to the airport</h2><p>Ask hotel reception to arrange a taxi, or request an Uber when you are ready. Set the destination to <strong>Sydney Airport T1 International Departures</strong>.</p><p>Allow time for traffic, check-in and security. Follow your airline’s recommended airport arrival time.</p></section>`;return '';}
 
 document.addEventListener('click',e=>{const tab=e.target.closest('.mtab');if(tab){setTab(tab.dataset.tab);return;}const ex=e.target.closest('[data-expand]');if(ex){toggleExpand(ex);return;}const sm=e.target.closest('[data-showmap]');if(sm){selectPlace(sm.dataset.showmap);return;}const day=e.target.closest('[data-day]');if(day){renderDay(+day.dataset.day);return;}const p=e.target.closest('[data-place]');if(p){selectPlace(p.dataset.place);return;}const a=e.target.closest('[data-action]');if(a)({today:showToday,week:showWeek,print:()=>window.print()})[a.dataset.action]?.();});
-const landing=$('#landing');function hideLanding(){landing.hidden=true;document.body.classList.remove('landing-open');}function showLanding(){landing.hidden=false;document.body.classList.add('landing-open');window.scrollTo(0,0);}
-try{localStorage.removeItem('kuLandingSeen');}catch(e){}document.body.classList.add('landing-open');
+const landing=$('#landing');function hideLanding(){landing.hidden=true;document.body.classList.remove('landing-open');}function showLanding(){landing.hidden=false;document.body.classList.add('landing-open');window.scrollTo(0,0);landing.classList.remove('play');void landing.offsetWidth;landing.classList.add('play');}
+try{localStorage.removeItem('kuLandingSeen');}catch(e){}document.body.classList.add('landing-open');landing.classList.add('play');
 $('#enterBtn').onclick=hideLanding;$('#brandBtn').onclick=showLanding;
 document.addEventListener('click',e=>{const j=e.target.closest('.jumpnav a');if(!j)return;e.preventDefault();const t=document.querySelector(j.getAttribute('href'));t?.scrollIntoView({behavior:'smooth',block:'start'});});
 $('#todayBtn').onclick=showToday;$('#weekBtn').onclick=showWeek;$('#essentialsBtn').onclick=()=>showEssentials();$('#helpBtn').onclick=()=>showEssentials(true);
